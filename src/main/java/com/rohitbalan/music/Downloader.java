@@ -28,6 +28,16 @@ public class Downloader {
 			return;
 		
 		try {
+			File mp3File = new File(folder, 
+		    		track.getTrackNumber() + ". " + 
+		    track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
+		    if(mp3File.exists()) {
+		    	if("retry".equals(System.getProperty("mode"))) {
+		    		System.out.println("Skipping as already downloaded.");
+		    		return;
+		    	}
+		    	mp3File.delete();
+		    }
 			System.out.println("Starting Download: " + track.getUrl());
 			int timeout = 10;
 			RequestConfig config = RequestConfig.custom()
@@ -44,10 +54,7 @@ public class Downloader {
 			    try {
 			    	if(responseCode >= 200 && responseCode <300) {
 					    InputStream content = entity.getContent();
-					    File mp3File = new File(folder, track.getTrackNumber() + ". " + track.getTitle() + ".mp3");
-					    if(mp3File.exists()) {
-					    	mp3File.delete();
-					    }
+					    
 					    Path destination = Paths.get(mp3File.getAbsolutePath());
 					    Files.copy(content, destination);
 					    System.out.println("Download Complete");

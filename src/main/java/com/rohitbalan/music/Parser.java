@@ -32,7 +32,7 @@ public class Parser {
 		    System.out.println(response1.getStatusLine() + " " + siteUrl);
 		    HttpEntity entity = response1.getEntity();
 		    String response = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-		    System.out.println(response);
+		    //System.out.println(response);
 		    EntityUtils.consume(entity);
 		    
 		    Document html = Jsoup.parse(response);
