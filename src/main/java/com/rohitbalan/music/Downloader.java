@@ -19,23 +19,22 @@ public class Downloader {
 		String folderStr = "/home/rohit/Music/" + track.getArtist() + "/" + track.getAlbum();
 		File folder = new File(folderStr);
 		folder.mkdirs();
-		
-		downloadBinary(track, folder, 6);
+		File mp3File = new File(folder, track.getTrackNumber() + ". " + track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
+	    if(mp3File.exists()) {
+	    	if("retry".equals(System.getProperty("mode"))) {
+	    		System.out.println("Skipping as already downloaded.");
+	    		return;
+	    	}
+	    }
+		downloadBinary(track, mp3File, 6);
 	}
 
-	private void downloadBinary(Track track, File folder, int retryCount) {
+	private void downloadBinary(Track track, File mp3File, int retryCount) {
 		if(retryCount==0)
 			return;
 		
 		try {
-			File mp3File = new File(folder, 
-		    		track.getTrackNumber() + ". " + 
-		    track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
 		    if(mp3File.exists()) {
-		    	if("retry".equals(System.getProperty("mode"))) {
-		    		System.out.println("Skipping as already downloaded.");
-		    		return;
-		    	}
 		    	mp3File.delete();
 		    }
 			System.out.println("Starting Download: " + track.getUrl());
@@ -74,7 +73,7 @@ public class Downloader {
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
-			downloadBinary(track, folder, retryCount-1);
+			downloadBinary(track, mp3File, retryCount-1);
 		}
 	}
 }
