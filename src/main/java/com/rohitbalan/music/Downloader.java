@@ -16,7 +16,7 @@ import org.apache.http.util.EntityUtils;
 
 public class Downloader {
 	public void download(Track track) {
-		String folderStr = "/home/rohit/Music/" + track.getArtist() + "/" + track.getAlbum();
+		String folderStr = System.getProperty("user.home") + "/Music/" + track.getArtist() + "/" + track.getAlbum();
 		File folder = new File(folderStr);
 		folder.mkdirs();
 		File mp3File = new File(folder, track.getTrackNumber() + ". " + track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
