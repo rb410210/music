@@ -16,17 +16,21 @@ import org.apache.http.util.EntityUtils;
 
 public class Downloader {
 	public void download(Track track) {
-		String folderStr = System.getProperty("user.home") + "/Music/" + track.getArtist() + "/" + track.getAlbum();
-		File folder = new File(folderStr);
+		final String folderStr = System.getProperty("user.home") + "/Music/" + track.getArtist() + "/" + track.getAlbum();
+		final File folder = new File(folderStr);
+		final File tempFolder = new File(System.getProperty("java.io.tmp") + "/Music/" + track.getArtist() + "/" + track.getAlbum());
 		folder.mkdirs();
-		File mp3File = new File(folder, track.getTrackNumber() + ". " + track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
-	    if(mp3File.exists()) {
+        tempFolder.mkdirs();
+		final File sourceFile = new File(tempFolder, track.getTrackNumber() + ". " + track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
+	    if(sourceFile.exists()) {
 	    	if("retry".equals(System.getProperty("mode"))) {
 	    		System.out.println("Skipping as already downloaded.");
 	    		return;
 	    	}
 	    }
-		downloadBinary(track, mp3File, 6);
+        final File destinationFile = new File(folder, track.getTrackNumber() + ". " + track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
+        downloadBinary(track, sourceFile, 6);
+        new Tagger().addTag(sourceFile, destinationFile, track);
 	}
 
 	private void downloadBinary(Track track, File mp3File, int retryCount) {
