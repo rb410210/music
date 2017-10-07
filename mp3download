@@ -1,0 +1,7 @@
+if [ -z "$1" ]
+    then
+        echo "MusicManager: No URL provided"
+    else
+    	java -Dmode=retry -jar /usr/local/MusicManager/MusicManager.jar "$@"
+fi
+
