@@ -13,18 +13,24 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Downloader {
-	public void download(Track track) {
+	private final Logger logger = LoggerFactory.getLogger(Downloader.class);
+
+	public void download(final Track track) {
 		final String folderStr = System.getProperty("user.home") + "/Music/" + track.getArtist() + "/" + track.getAlbum();
 		final File folder = new File(folderStr);
-		final File tempFolder = new File(System.getProperty("java.io.tmp") + "/Music/" + track.getArtist() + "/" + track.getAlbum());
+		final File tempFolder = new File(System.getProperty("java.io.tmpdir") + "/Music/" + track.getArtist() + "/" + track.getAlbum());
 		folder.mkdirs();
         tempFolder.mkdirs();
 		final File sourceFile = new File(tempFolder, track.getTrackNumber() + ". " + track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
 	    if(sourceFile.exists()) {
 	    	if("retry".equals(System.getProperty("mode"))) {
-	    		System.out.println("Skipping as already downloaded.");
+				logger.info("Skipping as already downloaded.");
 	    		return;
 	    	}
 	    }
@@ -41,7 +47,7 @@ public class Downloader {
 		    if(mp3File.exists()) {
 		    	mp3File.delete();
 		    }
-			System.out.println("Starting Download: " + track.getUrl());
+			logger.info("Starting Download: " + track.getUrl());
 			int timeout = 10;
 			RequestConfig config = RequestConfig.custom()
 					.setConnectTimeout(timeout * 1000)
@@ -60,7 +66,7 @@ public class Downloader {
 					    
 					    Path destination = Paths.get(mp3File.getAbsolutePath());
 					    Files.copy(content, destination);
-					    System.out.println("Download Complete");
+						logger.info("Download Complete");
 			    	} else {
 			    		throw new Exception("Response Code: " + responseCode);
 			    	}
@@ -71,11 +77,11 @@ public class Downloader {
 			    response.close();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+				logger.error(e1.getMessage(), e1);
 			}
 			downloadBinary(track, mp3File, retryCount-1);
 		}

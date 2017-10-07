@@ -1,11 +1,14 @@
 package com.rohitbalan.music;
 
 import com.mpatric.mp3agic.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 
 public class Tagger {
+    private final Logger logger = LoggerFactory.getLogger(Tagger.class);
 
     public void addTag(final File sourceFile, final File destinationFile, final Track track)  {
         try {
@@ -25,7 +28,7 @@ public class Tagger {
             id3v2Tag.setUrl(track.getUrl());
             mp3file.save(destinationFile.getAbsolutePath());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 }

@@ -14,8 +14,12 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Parser {
+	private final Logger logger = LoggerFactory.getLogger(Parser.class);
+
 	private String siteUrl;
 
 	public Parser(String siteUrl) {
@@ -29,10 +33,9 @@ public class Parser {
 		HttpGet httpGet = new HttpGet(siteUrl);
 		CloseableHttpResponse response1 = httpclient.execute(httpGet);
 		try {
-		    System.out.println(response1.getStatusLine() + " " + siteUrl);
+			logger.info(response1.getStatusLine() + " " + siteUrl);
 		    HttpEntity entity = response1.getEntity();
 		    String response = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-		    //System.out.println(response);
 		    EntityUtils.consume(entity);
 		    
 		    Document html = Jsoup.parse(response);
@@ -77,7 +80,7 @@ public class Parser {
 		} finally {
 		    response1.close();
 		}
-		System.out.println(mp3Urls.toString().replaceAll(", ", "\r\n"));
+		logger.info(mp3Urls.toString().replaceAll(", ", "\r\n"));
 		return mp3Urls;
 	}
 }
