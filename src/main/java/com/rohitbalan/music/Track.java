@@ -3,6 +3,7 @@ package com.rohitbalan.music;
 public class Track {
 	private String artist, album, title, url;
 	private int trackNumber;
+	private ArtWrapper albumArt;
 
 	public int getTrackNumber() {
 		return trackNumber;
@@ -42,6 +43,14 @@ public class Track {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public ArtWrapper getAlbumArt() {
+		return albumArt;
+	}
+
+	public void setAlbumArt(ArtWrapper albumArt) {
+		this.albumArt = albumArt;
 	}
 
 	@Override

@@ -30,6 +30,11 @@ public class Tagger {
             id3v2Tag.setTitle(track.getTitle());
             id3v2Tag.setAlbum(track.getAlbum());
             id3v2Tag.setUrl(track.getUrl());
+
+            if(track.getAlbumArt()!=null) {
+                id3v2Tag.setAlbumImage(IOUtils.toByteArray(new FileInputStream(track.getAlbumArt().getThumbnail())), "jpg");
+            }
+
             mp3file.save(destinationFile.getAbsolutePath());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

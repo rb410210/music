@@ -10,8 +10,10 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +39,22 @@ public class Downloader {
         final File destinationFile = new File(folder, track.getTrackNumber() + ". " + track.getTitle().replace('\\', ' ').replace('/', ' ') + ".mp3");
         downloadBinary(track, sourceFile, 6);
         new Tagger().addTag(sourceFile, destinationFile, track);
+
+		saveCover(track, folder);
+	}
+
+	private void saveCover(final Track track, final File folder) {
+		try {
+			if(track.getAlbumArt()!=null) {
+				final String ext = track.getAlbumArt().getImageUrl().substring(track.getAlbumArt().getImageUrl().lastIndexOf("."));
+				final File coverImage = new File(folder, "cover" + ext);
+				if(!coverImage.exists()) {
+					FileCopyUtils.copy(track.getAlbumArt().getImage(), coverImage);
+				}
+			}
+		} catch (IOException e1) {
+			logger.error(e1.getMessage(), e1);
+		}
 	}
 
 	private void downloadBinary(Track track, File mp3File, int retryCount) {

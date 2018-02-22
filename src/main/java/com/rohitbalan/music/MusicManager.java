@@ -30,7 +30,15 @@ public class MusicManager {
                 try {
                     final List<Track> tracks = new Parser(arg).execute();
 
+                    ArtWrapper albumArt = null;
+                    try {
+                        albumArt = albumArtDownloader.getAlbumArt(tracks.get(0).getArtist(), tracks.get(0).getAlbum());
+                    } catch (Exception e) {
+                        logger.error("Unable to download album art", e);
+                    }
+
                     for (final Track track : tracks) {
+                        track.setAlbumArt(albumArt);
                         downloader.download(track);
                     }
                 } catch (IOException e) {
